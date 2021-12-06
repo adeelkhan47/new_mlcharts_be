@@ -34,6 +34,15 @@ function connect() {
 
                                 console.info("Successfully connected to MySQL DB " + statements.DB_NAME);
 
+                                conn.on('error', function (err) {
+                                    console.log('db error', err);
+                                    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+                                        connect();
+                                    } else {
+                                        throw err;
+                                    }
+                                });
+
                                 conn.query(statements.CREATE_USER_TABLE)
                                     .catch(err =>
                                         console.error("Unable to create table " + statements.USER_TABLE_NAME, err)
