@@ -26,7 +26,7 @@ function connect() {
                             host: "localhost",
                             port: 3306,
                             user: "root",
-                            password: "mySQL@2021",
+                            password: "password",
                             database: statements.DB_NAME
                         })
                             .then((conn) => {
@@ -43,6 +43,10 @@ function connect() {
                                     .catch(err =>
                                         console.error("Unable to create table " + statements.DATA_TABLE_NAME, err)
                                     );
+
+                                setInterval(function () {
+                                    conn.query('SELECT 1');
+                                }, 5000);
                             })
                             .catch(err => {
                                 console.error("Unable to connect to MySQL");
