@@ -10,7 +10,7 @@ function connect() {
             host: "localhost",
             port: 3306,
             user: "root",
-            password: "password"
+            password: "adeelk47"
         })
             .then((con) => {
 
@@ -26,7 +26,7 @@ function connect() {
                             host: "localhost",
                             port: 3306,
                             user: "root",
-                            password: "password",
+                            password: "adeelk47",
                             database: statements.DB_NAME
                         })
                             .then((conn) => {
