@@ -32,14 +32,14 @@ function getAllData(userId) {
   });
 }
 
-function createData(userId, label, value) {
+function createData(userId, label, value, reference) {
   const SQL = `   INSERT INTO ${statements.DATA_TABLE_NAME} 
-                        (userId, label, value) 
+                        (userId, label, value, reference) 
                     VALUES 
-                        (?, ?, ?)
+                        (?, ?, ?, ?)
                 `;
 
-  const args = [userId, label, value];
+  const args = [userId, label, value, reference];
 
   return new Promise((resolve, reject) => {
     db.query(SQL, args)
@@ -58,13 +58,13 @@ function createData(userId, label, value) {
   });
 }
 
-function updateData(userId, dataId, label, value) {
+function updateData(userId, dataId, label, value, reference) {
   const SQL = `   UPDATE ${statements.DATA_TABLE_NAME} 
-                    SET label = ?, value = ?, modifiedOn = now() 
+                    SET label = ?, value = ?, reference = ?, modifiedOn = now() 
                     WHERE userId = ? AND id = ?
                 `;
 
-  const args = [label, value, userId, dataId];
+  const args = [label, value, reference, userId, dataId];
 
   return new Promise((resolve, reject) => {
     db.query(SQL, args)

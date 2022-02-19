@@ -5,7 +5,6 @@ function isValidDataObj(obj) {
     !(obj instanceof Array) &&
     Object.keys(obj).length &&
     obj.id &&
-    obj.label &&
     obj.hasOwnProperty("value")
   );
 }

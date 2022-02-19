@@ -2,7 +2,6 @@ const DB_NAME = "mlp";
 const USER_TABLE_NAME = "users";
 const DATA_TABLE_NAME = "data";
 
-
 const CREATE_DB = `             CREATE DATABASE IF NOT EXISTS ${DB_NAME}`;
 
 const CONNECT_DB = `            USE ${DB_NAME}`;
@@ -27,21 +26,20 @@ const CREATE_DATA_TABLE = `
                                     userId VARCHAR(255),
                                     label VARCHAR(255),
                                     value DOUBLE,
+                                    reference VARCHAR(255),
                                     createdOn DATETIME DEFAULT CURRENT_TIMESTAMP,
                                     modifiedOn DATETIME NULL 
                                 )
                         `;
 
-
-
 const statements = Object.freeze({
-    DB_NAME,
-    USER_TABLE_NAME,
-    DATA_TABLE_NAME,
-    CREATE_DB,
-    CONNECT_DB,
-    CREATE_USER_TABLE,
-    CREATE_DATA_TABLE
+  DB_NAME,
+  USER_TABLE_NAME,
+  DATA_TABLE_NAME,
+  CREATE_DB,
+  CONNECT_DB,
+  CREATE_USER_TABLE,
+  CREATE_DATA_TABLE
 });
 
 module.exports = statements;

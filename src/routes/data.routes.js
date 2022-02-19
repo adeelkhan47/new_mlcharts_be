@@ -22,7 +22,6 @@ router.post("/", (req, res) => {
     if (
       body instanceof Array &&
       body[0].userId &&
-      body[0].label &&
       body[0].hasOwnProperty("value")
     ) {
       let promises = [];
@@ -31,7 +30,12 @@ router.post("/", (req, res) => {
         promises.push(
           new Promise((resolve, rej) => {
             dataService
-              .createData(obj.userId, obj.label, obj.value)
+              .createData(
+                obj.userId,
+                obj.label || "",
+                obj.value,
+                obj.reference || ""
+              )
               .then((response) => {
                 resolve(response);
               })
@@ -58,11 +62,10 @@ router.post("/", (req, res) => {
       typeof body == "object" &&
       !(body instanceof Array) &&
       body.userId &&
-      body.label &&
       body.hasOwnProperty("value")
     ) {
       dataService
-        .createData(body.userId, body.label, body.value)
+        .createData(obj.userId, obj.label || "", obj.value, obj.reference || "")
         .then((response) => {
           res.send(response);
         })
@@ -89,11 +92,16 @@ router.put("/", (req, res) => {
     Object.keys(body).length &&
     body.userId &&
     body.dataId &&
-    body.label &&
     body.hasOwnProperty("value")
   ) {
     dataService
-      .updateData(body.userId, body.dataId, body.label, body.value)
+      .updateData(
+        body.userId,
+        body.dataId,
+        body.label,
+        body.value,
+        body.reference
+      )
       .then((response) => {
         res.send(response);
       })
@@ -129,7 +137,8 @@ router.put("/many", (req, res) => {
             body.userId,
             obj.id,
             obj.label,
-            obj.value
+            obj.value,
+            obj.reference
           );
         } catch (err) {
           console.error(err);
