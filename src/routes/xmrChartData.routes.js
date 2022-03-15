@@ -1,27 +1,41 @@
 const validationUtil = require("../utils/validation.util");
-const dataService = require("../services/data.service");
+const xmrChartDataService = require("../services/xmrChartData.service");
 const express = require("express");
 const router = express.Router();
 
-router.get("/:userId", (req, res) => {
-  dataService
-    .getAllData(req.params.userId)
-    .then((response) => {
-      res.send(response);
-    })
-    .catch((err) => {
-      res.status(err.status);
-      res.send(err.message);
-    });
+router.get("/:chartId", (req, res) => {
+  const chartId = req.params.chartId;
+  const password = req.query.password || "";
+  const userId = req.headers["user-id"];
+
+  if (
+    validationUtil.isValidString(userId) &&
+    validationUtil.isValidString(chartId)
+  ) {
+    xmrChartDataService
+      .getAllData(chartId, password, userId)
+      .then((response) => {
+        res.send(response);
+      })
+      .catch((err) => {
+        res.status(err.status);
+        res.send(err.message);
+      });
+  } else {
+    res.status(400);
+    res.send("Invalid Request data");
+  }
 });
 
 router.post("/", (req, res) => {
   const body = req.body;
+  const password = req.query.password || "";
+  const userId = req.headers["user-id"];
 
-  if (body && typeof body == "object" && Object.keys(body).length) {
+  if (validationUtil.isValidString(userId) && body) {
     if (
       body instanceof Array &&
-      body[0].userId &&
+      validationUtil.isValidString(body[0].chartId) &&
       body[0].hasOwnProperty("value")
     ) {
       let promises = [];
@@ -29,18 +43,19 @@ router.post("/", (req, res) => {
       body.forEach((obj) => {
         promises.push(
           new Promise((resolve, rej) => {
-            dataService
+            xmrChartDataService
               .createData(
-                obj.userId,
+                obj.chartId,
+                password,
                 obj.label || "",
                 obj.value,
-                obj.reference || ""
+                obj.reference || "",
+                userId
               )
               .then((response) => {
                 resolve(response);
               })
               .catch((err) => {
-                console.error(err);
                 rej(err);
               });
           })
@@ -48,10 +63,16 @@ router.post("/", (req, res) => {
       });
 
       Promise.allSettled(promises)
-        .then((response) => {
-          res.send({
-            message: "Successfully created data"
-          });
+        .then((results) => {
+          const found = results.find((obj) => obj.status === "fulfilled");
+          if (found)
+            res.send({
+              message: "Successfully created data"
+            });
+          else {
+            res.status(results[0].reason.status || 500);
+            res.send(results[0].reason.message || "Unable to create data");
+          }
         })
         .catch((err) => {
           console.error("err :: ", err);
@@ -61,11 +82,18 @@ router.post("/", (req, res) => {
     } else if (
       typeof body == "object" &&
       !(body instanceof Array) &&
-      body.userId &&
+      validationUtil.isValidString(body.chartId) &&
       body.hasOwnProperty("value")
     ) {
-      dataService
-        .createData(obj.userId, obj.label || "", obj.value, obj.reference || "")
+      xmrChartDataService
+        .createData(
+          body.chartId,
+          password,
+          body.label || "",
+          body.value,
+          body.reference || "",
+          userId
+        )
         .then((response) => {
           res.send(response);
         })
@@ -85,22 +113,25 @@ router.post("/", (req, res) => {
 
 router.put("/", (req, res) => {
   const body = req.body;
+  const password = req.query.password || "";
+  const userId = req.headers["user-id"];
 
   if (
-    body &&
-    typeof body == "object" &&
-    Object.keys(body).length &&
-    body.userId &&
+    validationUtil.isValidString(userId) &&
+    validationUtil.isValidObj(body) &&
+    validationUtil.isValidString(body.chartId) &&
     body.dataId &&
     body.hasOwnProperty("value")
   ) {
-    dataService
+    xmrChartDataService
       .updateData(
-        body.userId,
+        body.chartId,
+        password,
         body.dataId,
         body.label,
         body.value,
-        body.reference
+        body.reference,
+        userId
       )
       .then((response) => {
         res.send(response);
@@ -117,12 +148,13 @@ router.put("/", (req, res) => {
 
 router.put("/many", (req, res) => {
   const body = req.body;
+  const password = req.query.password || "";
+  const userId = req.headers["user-id"];
 
   if (
-    body &&
-    typeof body == "object" &&
-    Object.keys(body).length &&
-    body.userId &&
+    validationUtil.isValidString(userId) &&
+    validationUtil.isValidObj(body) &&
+    validationUtil.isValidString(body.chartId) &&
     body.dataObjectList
   ) {
     const dataObjectList = body.dataObjectList.filter(
@@ -133,12 +165,14 @@ router.put("/many", (req, res) => {
     if (dataObjectList && dataObjectList.length) {
       dataObjectList.forEach(async (obj) => {
         try {
-          await dataService.updateData(
-            body.userId,
+          await xmrChartDataService.updateData(
+            body.chartId,
+            password,
             obj.id,
             obj.label,
             obj.value,
-            obj.reference
+            obj.reference,
+            userId
           );
         } catch (err) {
           console.error(err);
@@ -163,16 +197,16 @@ router.put("/many", (req, res) => {
 
 router.delete("/", (req, res) => {
   const body = req.body;
+  const password = req.query.password || "";
+  const userId = req.headers["user-id"];
 
   if (
-    body &&
-    typeof body == "object" &&
-    Object.keys(body).length &&
-    body.userId &&
+    validationUtil.isValidObj(body) &&
+    validationUtil.isValidString(body.chartId) &&
     body.dataId
   ) {
-    dataService
-      .removeData(body.userId, body.dataId)
+    xmrChartDataService
+      .removeData(body.chartId, password, body.dataId, userId)
       .then((response) => {
         res.send(response);
       })
@@ -188,12 +222,12 @@ router.delete("/", (req, res) => {
 
 router.delete("/many", (req, res) => {
   const body = req.body;
+  const password = req.query.password || "";
+  const userId = req.headers["user-id"];
 
   if (
-    body &&
-    typeof body == "object" &&
-    Object.keys(body).length &&
-    body.userId &&
+    validationUtil.isValidObj(body) &&
+    validationUtil.isValidString(body.chartId) &&
     body.dataIds &&
     body.dataIds.length
   ) {
@@ -203,7 +237,12 @@ router.delete("/many", (req, res) => {
     if (dataIds && dataIds.length) {
       dataIds.forEach(async (dataId) => {
         try {
-          await dataService.removeData(body.userId, dataId);
+          await xmrChartDataService.removeData(
+            body.chartId,
+            password,
+            dataId,
+            userId
+          );
         } catch (err) {
           error = err;
         }

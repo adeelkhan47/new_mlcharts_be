@@ -58,7 +58,31 @@ function register(email, password, firstName, lastName, dob) {
   });
 }
 
+function __userExists(userId) {
+  const SQL = `   SELECT count(*) AS count FROM ${statements.USER_TABLE_NAME} 
+                  WHERE email = ?
+              `;
+
+  const args = [userId];
+
+  return new Promise((resolve, reject) => {
+    db.query(SQL, args)
+      .then((result) => {
+        if (result && result[0] && result[0].length) {
+          result = result[0][0].count;
+          resolve(result > 0);
+        }
+        resolve(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        resolve(false);
+      });
+  });
+}
+
 module.exports = Object.freeze({
   login,
-  register
+  register,
+  __userExists
 });
