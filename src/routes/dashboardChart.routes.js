@@ -22,6 +22,29 @@ router.get("/", (req, res) => {
   }
 });
 
+router.get("/is-private/:chartId", (req, res) => {
+  const chartId = req.params.chartId;
+  const userId = req.headers["user-id"];
+
+  if (
+    validationUtil.isValidString(chartId) &&
+    validationUtil.isValidString(userId)
+  ) {
+    dashboardChartService
+      .isPrivateChart(chartId, userId)
+      .then((response) => {
+        res.send(response);
+      })
+      .catch((err) => {
+        res.status(err.status);
+        res.send(err.message);
+      });
+  } else {
+    res.status(400);
+    res.send("Invalid Request data");
+  }
+});
+
 router.get("/:chartId", (req, res) => {
   const chartId = req.params.chartId;
   const password = req.query.password || "";

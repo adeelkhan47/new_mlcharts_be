@@ -33,6 +33,36 @@ function __getDashboardChart(chartId) {
   });
 }
 
+function isPrivateChart(chartId, userId) {
+  const SQL = `   SELECT * FROM ${statements.DASHBOARD_CHART_TABLE_NAME}
+                  WHERE chartId = ?
+              `;
+
+  const args = [chartId];
+
+  return new Promise((resolve, reject) => {
+    db.query(SQL, args)
+      .then((res) => {
+        if (res && res[0] && res[0].length) {
+          const chart = res[0][0];
+          resolve({
+            data: !(chart.isPublic || chart.createdBy === userId)
+          });
+        } else {
+          resolve({
+            data: false
+          });
+        }
+      })
+      .catch((err) => {
+        console.error("Unable to get dashboard chart for isPrivateChart ", err);
+        resolve({
+          data: false
+        });
+      });
+  });
+}
+
 function getDashboardChart(chartId, password, userId) {
   const SQL = `   SELECT * FROM ${statements.DASHBOARD_CHART_TABLE_NAME}
                   WHERE chartId = ?
@@ -365,6 +395,7 @@ function removeAllChartData(chartId, userId) {
 }
 
 module.exports = Object.freeze({
+  isPrivateChart,
   getDashboardChart,
   getDashboardCharts,
   createDashboardChart,
