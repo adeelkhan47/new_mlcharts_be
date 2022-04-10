@@ -394,6 +394,33 @@ function removeAllChartData(chartId, userId) {
   });
 }
 
+async function chartExists(chartId, password, userId) {
+  const SQL = `   SELECT * FROM ${statements.DASHBOARD_CHART_TABLE_NAME}
+                  WHERE chartId = ?
+              `;
+  const args = [chartId];
+  const res = await db.query(SQL, args);
+
+  let data = [];
+  if (res && res[0]) data = res[0];
+
+  if (data.length) {
+    data = data[0];
+
+    if (
+      data.isPublic ||
+      data.password === password ||
+      data.createdBy === userId
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
 module.exports = Object.freeze({
   isPrivateChart,
   getDashboardChart,
@@ -403,5 +430,6 @@ module.exports = Object.freeze({
   deleteDashboardChart,
   __canCreate,
   __canUpdate,
-  __canDelete
+  __canDelete,
+  chartExists
 });

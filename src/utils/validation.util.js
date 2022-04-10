@@ -1,4 +1,4 @@
-function isValidObj(obj) {
+function isNonEmptyObj(obj) {
   return !!(
     obj &&
     typeof obj == "object" &&
@@ -12,12 +12,12 @@ function isValidString(str) {
 }
 
 function isValidDataObj(obj) {
-  return !!(isValidObj(obj) && obj.id && obj.hasOwnProperty("value"));
+  return !!(isNonEmptyObj(obj) && obj.id && obj.hasOwnProperty("value"));
 }
 
 function isValidDashboardChartObj(obj) {
   return !!(
-    isValidObj(obj) &&
+    isNonEmptyObj(obj) &&
     isValidString(obj.name) &&
     obj.hasOwnProperty("isPublic") &&
     typeof obj.isPublic === "boolean" &&
@@ -28,10 +28,20 @@ function isValidDashboardChartObj(obj) {
   );
 }
 
+function isNonEmptyArray(arr) {
+  return !!(arr instanceof Array && arr.length);
+}
+
+function isArrayOfString(arr) {
+  return !!(isNonEmptyArray(arr) && isValidString(arr[0]));
+}
+
 const validationUtil = {
-  isValidObj,
+  isNonEmptyObj,
   isValidString,
   isValidDataObj,
+  isNonEmptyArray,
+  isArrayOfString,
   isValidDashboardChartObj
 };
 

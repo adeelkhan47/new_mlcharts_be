@@ -75,7 +75,7 @@ router.post("/", (req, res) => {
 
   if (
     validationUtil.isValidString(userId) &&
-    validationUtil.isValidObj(body) &&
+    validationUtil.isNonEmptyObj(body) &&
     validationUtil.isValidDashboardChartObj(body)
   ) {
     body.subgroupSize = Number.parseInt(body.subgroupSize);
@@ -113,7 +113,7 @@ router.put("/:chartId", (req, res) => {
   if (
     validationUtil.isValidString(userId) &&
     validationUtil.isValidString(chartId) &&
-    validationUtil.isValidObj(body) &&
+    validationUtil.isNonEmptyObj(body) &&
     validationUtil.isValidDashboardChartObj(body)
   ) {
     body.subgroupSize = Number.parseInt(body.subgroupSize);

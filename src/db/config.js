@@ -75,6 +75,26 @@ function connect() {
                     )
                   );
 
+                conn
+                  .query(statements.CREATE_X_BAR_R_CHART_TABLE)
+                  .catch((err) =>
+                    console.error(
+                      "Unable to create xBar-R chart table " +
+                        statements.X_BAR_R_CHART_TABLE_NAME,
+                      err
+                    )
+                  );
+
+                conn
+                  .query(statements.CREATE_X_BAR_R_CHART_DATA_COLUMNS)
+                  .catch((err) =>
+                    console.error(
+                      "Unable to create xBar-R chart columns table " +
+                        statements.X_BAR_R_CHART_DATA_COLUMNS_NAME,
+                      err
+                    )
+                  );
+
                 setInterval(function () {
                   conn.query("SELECT 1");
                 }, 5000);

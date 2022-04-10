@@ -118,7 +118,7 @@ router.put("/", (req, res) => {
 
   if (
     validationUtil.isValidString(userId) &&
-    validationUtil.isValidObj(body) &&
+    validationUtil.isNonEmptyObj(body) &&
     validationUtil.isValidString(body.chartId) &&
     body.dataId &&
     body.hasOwnProperty("value")
@@ -153,7 +153,7 @@ router.put("/many", (req, res) => {
 
   if (
     validationUtil.isValidString(userId) &&
-    validationUtil.isValidObj(body) &&
+    validationUtil.isNonEmptyObj(body) &&
     validationUtil.isValidString(body.chartId) &&
     body.dataObjectList
   ) {
@@ -201,7 +201,7 @@ router.delete("/", (req, res) => {
   const userId = req.headers["user-id"];
 
   if (
-    validationUtil.isValidObj(body) &&
+    validationUtil.isNonEmptyObj(body) &&
     validationUtil.isValidString(body.chartId) &&
     body.dataId
   ) {
@@ -226,7 +226,7 @@ router.delete("/many", (req, res) => {
   const userId = req.headers["user-id"];
 
   if (
-    validationUtil.isValidObj(body) &&
+    validationUtil.isNonEmptyObj(body) &&
     validationUtil.isValidString(body.chartId) &&
     body.dataIds &&
     body.dataIds.length

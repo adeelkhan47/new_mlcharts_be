@@ -7,8 +7,9 @@ const PORT = 8090;
 
 const dashboardChartRoutes = require("./src/routes/dashboardChart.routes");
 const xmrChartDataRoutes = require("./src/routes/xmrChartData.routes");
-const userRoutes = require("./src/routes/user.routes");
+const xBarRChartRoutes = require("./src/routes/xBarRChart.routes");
 const userService = require("./src/services/user.service");
+const userRoutes = require("./src/routes/user.routes");
 
 db.connect();
 
@@ -19,6 +20,7 @@ app.use(authChecker);
 // ROUTES
 app.use("/dashboard-charts", dashboardChartRoutes);
 app.use("/xmr-data", xmrChartDataRoutes);
+app.use("/x-bar-r", xBarRChartRoutes);
 app.use("/users", userRoutes);
 
 app.listen(PORT, () => {
