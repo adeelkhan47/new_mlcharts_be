@@ -76,7 +76,9 @@ router.post("/", (req, res) => {
   if (
     validationUtil.isValidString(userId) &&
     validationUtil.isNonEmptyObj(body) &&
-    validationUtil.isValidDashboardChartObj(body)
+    validationUtil.isValidDashboardChartObj(body) &&
+    body.hasOwnProperty("upperSpecLimit") &&
+    body.hasOwnProperty("lowerSpecLimit")
   ) {
     body.subgroupSize = Number.parseInt(body.subgroupSize);
     dashboardChartService
@@ -86,6 +88,8 @@ router.post("/", (req, res) => {
         body.password,
         body.subgroupSize,
         body.chartType,
+        body.upperSpecLimit,
+        body.lowerSpecLimit,
         userId
       )
       .then((response) => {
@@ -123,6 +127,38 @@ router.put("/:chartId", (req, res) => {
         body.isPublic,
         body.password,
         body.subgroupSize,
+        userId
+      )
+      .then((response) => {
+        res.send(response);
+      })
+      .catch((err) => {
+        res.status(err.status);
+        res.send(err.message);
+      });
+  } else {
+    res.status(400);
+    res.send("Invalid Request data");
+  }
+});
+
+router.put("/spec-limits/:chartId", (req, res) => {
+  const body = req.body;
+  const chartId = req.params.chartId;
+  const userId = req.headers["user-id"];
+
+  if (
+    validationUtil.isValidString(userId) &&
+    validationUtil.isValidString(chartId) &&
+    validationUtil.isNonEmptyObj(body) &&
+    body.hasOwnProperty("upperSpecLimit") &&
+    body.hasOwnProperty("lowerSpecLimit")
+  ) {
+    dashboardChartService
+      .updateDashboardSpecLimits(
+        chartId,
+        body.upperSpecLimit,
+        body.lowerSpecLimit,
         userId
       )
       .then((response) => {

@@ -146,6 +146,8 @@ function createDashboardChart(
   password = "",
   subgroupSize,
   chartType,
+  upperSpecLimit,
+  lowerSpecLimit,
   userId
 ) {
   const chartId = helperUtil.generateId(name);
@@ -166,9 +168,9 @@ function createDashboardChart(
           });
         } else {
           const SQL = `   INSERT INTO ${statements.DASHBOARD_CHART_TABLE_NAME} 
-                            (chartId, name, isPublic, password, subgroupSize, chartType, createdBy)
+                            (chartId, name, isPublic, password, subgroupSize, chartType, upperSpecLimit, lowerSpecLimit, createdBy)
                           VALUES 
-                            (?, ?, ?, ?, ?, ?, ?)
+                            (?, ?, ?, ?, ?, ?, ?, ?, ?)
                       `;
 
           const args = [
@@ -178,6 +180,8 @@ function createDashboardChart(
             password,
             subgroupSize,
             chartType,
+            upperSpecLimit,
+            lowerSpecLimit,
             userId
           ];
 
@@ -241,6 +245,68 @@ function updateDashboardChart(
                       `;
 
             const args = [isPublic, password, subgroupSize, userId, chartId];
+
+            db.query(SQL, args)
+              .then(() => {
+                __getDashboardChart(chartId)
+                  .then((res) => resolve(res))
+                  .catch((err) => reject(err));
+              })
+              .catch((err) => {
+                console.error("Unable to update dashboard chart", err);
+                reject({
+                  status: 500,
+                  message: err.sqlMessage || "Unable to update dashboard chart"
+                });
+              });
+          }
+        }
+      })
+      .catch((error) => {
+        console.error(
+          "Unable to Update dashboard chart, Exception occurred :: ",
+          error
+        );
+
+        if (error && error.status && error.message) reject(error);
+        else
+          reject({
+            status: 500,
+            message: "Something went wrong"
+          });
+      });
+  });
+}
+
+function updateDashboardSpecLimits(
+  chartId,
+  upperSpecLimit,
+  lowerSpecLimit,
+  userId
+) {
+  return new Promise((resolve, reject) => {
+    __getDashboardChart(chartId)
+      .then((result) => {
+        if (!(result && result.data && result.data.length)) {
+          reject({
+            status: 404,
+            message: "Chart does not exists"
+          });
+        } else {
+          result = result.data[0];
+
+          if (result.createdBy !== userId) {
+            reject({
+              status: 403,
+              message: "You are not allowed to perform this operation"
+            });
+          } else {
+            const SQL = `   UPDATE ${statements.DASHBOARD_CHART_TABLE_NAME} 
+                          SET upperSpecLimit = ?, lowerSpecLimit = ?, modifiedOn = now(), modifiedBy = ?
+                          WHERE chartId = ? 
+                      `;
+
+            const args = [upperSpecLimit, lowerSpecLimit, userId, chartId];
 
             db.query(SQL, args)
               .then(() => {
@@ -427,6 +493,7 @@ module.exports = Object.freeze({
   getDashboardCharts,
   createDashboardChart,
   updateDashboardChart,
+  updateDashboardSpecLimits,
   deleteDashboardChart,
   __canCreate,
   __canUpdate,

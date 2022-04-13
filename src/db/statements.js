@@ -31,6 +31,8 @@ const CREATE_DASHBOARD_CHART_TABLE = `
                                     password VARCHAR(255),
                                     subgroupSize INT,
                                     chartType VARCHAR(255),
+                                    upperSpecLimit VARCHAR(255),
+                                    lowerSpecLimit VARCHAR(255),
                                     createdOn DATETIME DEFAULT CURRENT_TIMESTAMP,
                                     createdBy VARCHAR(255),
                                     modifiedOn DATETIME NULL,
