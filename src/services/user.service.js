@@ -2,7 +2,7 @@ const statements = require("../db/statements");
 const db = require("../db/config");
 
 function login(email, password) {
-  const SQL = `   SELECT email, firstName, lastName, dob, createdOn, modifiedOn FROM ${statements.USER_TABLE_NAME} 
+  const SQL = `   SELECT email, firstName, lastName, company, createdOn, modifiedOn FROM ${statements.USER_TABLE_NAME} 
                     WHERE email = ?
                 `;
 
@@ -32,14 +32,14 @@ function login(email, password) {
   });
 }
 
-function register(email, password, firstName, lastName, dob) {
+function register(email, password, firstName, lastName, company) {
   const SQL = `   INSERT INTO ${statements.USER_TABLE_NAME} 
-                        (email, password, firstName, lastName, dob) 
+                        (email, password, firstName, lastName, company) 
                     VALUES 
                         (?, ?, ?, ?, ?)
                 `;
 
-  const args = [email, password, firstName, lastName, dob];
+  const args = [email, password, firstName, lastName, company];
 
   return new Promise((resolve, reject) => {
     db.query(SQL, args)

@@ -1,0 +1,6 @@
+dynamic charts
+dynamic pages
+dynamic routing
+main dashboard page
+pages crud+ apis
+sharing

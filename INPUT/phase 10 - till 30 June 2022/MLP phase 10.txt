@@ -1,0 +1,3 @@
+2 => chart based on all data of x1 + x2 
+3 => new chart named process capability ... has only one col named cpk
+7 => select default lock limit for charts

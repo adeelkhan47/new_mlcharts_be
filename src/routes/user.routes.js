@@ -39,8 +39,7 @@ router.post("/register", (req, res) => {
     body.email &&
     body.password &&
     body.firstName &&
-    body.lastName &&
-    body.dob
+    body.lastName
   ) {
     userService
       .register(
@@ -48,7 +47,7 @@ router.post("/register", (req, res) => {
         body.password,
         body.firstName,
         body.lastName,
-        body.dob
+        body.company || ""
       )
       .then((response) => {
         res.send(response);

@@ -16,7 +16,7 @@ const CREATE_USER_TABLE = `
                                     password VARCHAR(255),
                                     firstName VARCHAR(255),
                                     lastName VARCHAR(255),
-                                    dob VARCHAR(255),
+                                    company VARCHAR(255) NULL,
                                     createdOn DATETIME DEFAULT CURRENT_TIMESTAMP,
                                     modifiedOn DATETIME NULL
                                 )
@@ -85,20 +85,20 @@ const CREATE_X_BAR_R_CHART_DATA_COLUMNS = `
                 `;
 
 const statements = Object.freeze({
-  DB_NAME,
-  USER_TABLE_NAME,
-  DASHBOARD_CHART_TABLE_NAME,
-  XMR_CHART_DATA_TABLE_NAME,
-  CREATE_DB,
-  CONNECT_DB,
-  CREATE_USER_TABLE,
-  CREATE_DASHBOARD_CHART_TABLE,
-  CREATE_XMR_CHART_DATA_TABLE,
+    DB_NAME,
+    USER_TABLE_NAME,
+    DASHBOARD_CHART_TABLE_NAME,
+    XMR_CHART_DATA_TABLE_NAME,
+    CREATE_DB,
+    CONNECT_DB,
+    CREATE_USER_TABLE,
+    CREATE_DASHBOARD_CHART_TABLE,
+    CREATE_XMR_CHART_DATA_TABLE,
 
-  X_BAR_R_CHART_TABLE_NAME,
-  X_BAR_R_CHART_DATA_COLUMNS_NAME,
-  CREATE_X_BAR_R_CHART_TABLE,
-  CREATE_X_BAR_R_CHART_DATA_COLUMNS
+    X_BAR_R_CHART_TABLE_NAME,
+    X_BAR_R_CHART_DATA_COLUMNS_NAME,
+    CREATE_X_BAR_R_CHART_TABLE,
+    CREATE_X_BAR_R_CHART_DATA_COLUMNS
 });
 
 module.exports = statements;

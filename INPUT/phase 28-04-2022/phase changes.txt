@@ -1,0 +1,10 @@
+
+ucl & lcl *3 must
+add cols
+add locl 0-1
+default end wala ucl etc
+
+
+Ask about xBarR avgCL (value is not changing)
+
+
