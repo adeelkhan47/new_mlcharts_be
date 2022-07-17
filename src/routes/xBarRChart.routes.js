@@ -102,6 +102,7 @@ router.post("/:chartId", async (req, res) => {
       password,
       body.reference1 || "",
       body.reference2 || "",
+      body.note || "",
       body.values || {},
       userId
     );
@@ -146,6 +147,7 @@ router.put("/:chartId/:rowId", async (req, res) => {
       password,
       body.reference1 || "",
       body.reference2 || "",
+      body.note || "",
       body.values || {},
       userId
     );

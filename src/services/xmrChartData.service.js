@@ -40,19 +40,19 @@ function getAllData(chartId, password, userId) {
   });
 }
 
-function createData(chartId, password, label, value, reference, userId) {
+function createData(chartId, password, label, value, reference, note, userId) {
   return new Promise((resolve, reject) => {
     dashboardChartService
       .__canCreate(chartId, password, userId)
       .then((canCreate) => {
         if (canCreate) {
           const SQL = `   INSERT INTO ${statements.XMR_CHART_DATA_TABLE_NAME} 
-                            (chartId, label, value, reference, createdBy) 
+                            (chartId, label, value, reference, note, createdBy) 
                           VALUES 
-                            (?, ?, ?, ?, ?)
+                            (?, ?, ?, ?, ?, ?)
                       `;
 
-          const args = [chartId, label, value, reference, userId];
+          const args = [chartId, label, value, reference, note, userId];
 
           db.query(SQL, args)
             .then(() => {
@@ -91,6 +91,7 @@ function updateData(
   label,
   value,
   reference,
+  note,
   userId
 ) {
   return new Promise((resolve, reject) => {
@@ -99,11 +100,11 @@ function updateData(
       .then((canUpdate) => {
         if (canUpdate) {
           const SQL = `   UPDATE ${statements.XMR_CHART_DATA_TABLE_NAME} 
-                          SET label = ?, value = ?, reference = ?, modifiedOn = now(), modifiedBy = ? 
+                          SET label = ?, value = ?, reference = ?, note = ?, modifiedOn = now(), modifiedBy = ? 
                           WHERE chartId = ? AND id = ?
                       `;
 
-          const args = [label, value, reference, userId, chartId, dataId];
+          const args = [label, value, reference, note, userId, chartId, dataId];
 
           db.query(SQL, args)
             .then(() => {

@@ -85,16 +85,17 @@ async function __addChartData(
   chartId,
   reference1 = "",
   reference2 = "",
+  note = "",
   values = {},
   userId
 ) {
   const SQL = ` INSERT INTO ${statements.X_BAR_R_CHART_TABLE_NAME} 
-                  (chartId, reference1, reference2, createdBy) 
+                  (chartId, reference1, reference2, note, createdBy) 
                 VALUES 
-                  (?, ?, ?, ?)
+                  (?, ?, ?, ?, ?)
               `;
 
-  const args = [chartId, reference1, reference2, userId];
+  const args = [chartId, reference1, reference2, note, userId];
   const res = await db.query(SQL, args);
   const rowId = res[0].insertId;
   await __saveDataColValues(rowId, chartId, values, userId);
@@ -105,14 +106,15 @@ async function __updateChartData(
   chartId,
   reference1,
   reference2,
+  note,
   values,
   userId
 ) {
   const SQL = ` UPDATE ${statements.X_BAR_R_CHART_TABLE_NAME} 
-                SET reference1 = ?, reference2 = ?, modifiedOn = now(), modifiedBy = ? 
+                SET reference1 = ?, reference2 = ?, note = ?, modifiedOn = now(), modifiedBy = ? 
                 WHERE chartId = ? AND id = ?
               `;
-  const args = [reference1, reference2, userId, chartId, rowId];
+  const args = [reference1, reference2, note, userId, chartId, rowId];
   await db.query(SQL, args);
   await __saveDataColValues(rowId, chartId, values, userId);
 }
@@ -203,6 +205,7 @@ async function addChartData(
   password,
   reference1 = "",
   reference2 = "",
+  note = "",
   values = {},
   userId
 ) {
@@ -235,7 +238,7 @@ async function addChartData(
     return Response;
   }
 
-  await __addChartData(chartId, reference1, reference2, values, userId);
+  await __addChartData(chartId, reference1, reference2, note, values, userId);
 
   Response.status = 200;
   Response.message = "Successfully added chart data";
@@ -248,6 +251,7 @@ async function updateChartData(
   password = "",
   reference1 = "",
   reference2 = "",
+  note = "",
   values,
   userId
 ) {
@@ -285,6 +289,7 @@ async function updateChartData(
     chartId,
     reference1,
     reference2,
+    note,
     values,
     userId
   );
@@ -370,6 +375,7 @@ async function addMultiChartData(chartId, password, records, userId) {
         chartId,
         record.reference1,
         record.reference2,
+        record.note,
         record.values,
         userId
       )
@@ -420,6 +426,7 @@ async function updateMultiChartData(chartId, password = "", records, userId) {
         chartId,
         record.reference1,
         record.reference2,
+        record.note,
         record.values,
         userId
       )

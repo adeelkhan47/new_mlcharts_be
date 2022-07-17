@@ -50,6 +50,7 @@ router.post("/", (req, res) => {
                 obj.label || "",
                 obj.value,
                 obj.reference || "",
+                obj.note || "",
                 userId
               )
               .then((response) => {
@@ -92,6 +93,7 @@ router.post("/", (req, res) => {
           body.label || "",
           body.value,
           body.reference || "",
+          body.note || "",
           userId
         )
         .then((response) => {
@@ -131,6 +133,7 @@ router.put("/", (req, res) => {
         body.label,
         body.value,
         body.reference,
+        body.note || "",
         userId
       )
       .then((response) => {
@@ -172,6 +175,7 @@ router.put("/many", (req, res) => {
             obj.label,
             obj.value,
             obj.reference,
+            obj.note || "",
             userId
           );
         } catch (err) {
