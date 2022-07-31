@@ -90,6 +90,7 @@ router.post("/", (req, res) => {
         body.chartType,
         body.upperSpecLimit,
         body.lowerSpecLimit,
+        body.headings || "",
         userId
       )
       .then((response) => {
@@ -159,6 +160,33 @@ router.put("/spec-limits/:chartId", (req, res) => {
         chartId,
         body.upperSpecLimit,
         body.lowerSpecLimit,
+        userId
+      )
+      .then((response) => {
+        res.send(response);
+      })
+      .catch((err) => {
+        res.status(err.status);
+        res.send(err.message);
+      });
+  } else {
+    res.status(400);
+    res.send("Invalid Request data");
+  }
+});
+
+router.put("/headings/:chartId", (req, res) => {
+  const headings = req.body.headings;
+  const chartId = req.params.chartId;
+  const userId = req.headers["user-id"];
+  if (
+    validationUtil.isValidString(userId) &&
+    validationUtil.isValidString(chartId)
+  ) {
+    dashboardChartService
+      .updateDashboardHeadings(
+        headings,
+        chartId,
         userId
       )
       .then((response) => {

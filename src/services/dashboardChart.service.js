@@ -148,6 +148,7 @@ function createDashboardChart(
   chartType,
   upperSpecLimit,
   lowerSpecLimit,
+  headings,
   userId
 ) {
   const chartId = helperUtil.generateId(name);
@@ -168,9 +169,9 @@ function createDashboardChart(
           });
         } else {
           const SQL = `   INSERT INTO ${statements.DASHBOARD_CHART_TABLE_NAME} 
-                            (chartId, name, isPublic, password, subgroupSize, chartType, upperSpecLimit, lowerSpecLimit, createdBy)
+                            (chartId, name, isPublic, password, subgroupSize, chartType, upperSpecLimit, lowerSpecLimit, headings, createdBy)
                           VALUES 
-                            (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                       `;
 
           const args = [
@@ -182,6 +183,7 @@ function createDashboardChart(
             chartType,
             upperSpecLimit,
             lowerSpecLimit,
+            headings,
             userId
           ];
 
@@ -327,6 +329,67 @@ function updateDashboardSpecLimits(
       .catch((error) => {
         console.error(
           "Unable to Update dashboard chart, Exception occurred :: ",
+          error
+        );
+
+        if (error && error.status && error.message) reject(error);
+        else
+          reject({
+            status: 500,
+            message: "Something went wrong"
+          });
+      });
+  });
+}
+
+function updateDashboardHeadings(
+  headings,
+  chartId,
+  userId
+) {
+  return new Promise((resolve, reject) => {
+    __getDashboardChart(chartId)
+      .then((result) => {
+        if (!(result && result.data && result.data.length)) {
+          reject({
+            status: 404,
+            message: "Chart does not exists"
+          });
+        } else {
+          result = result.data[0];
+
+          if (result.createdBy !== userId) {
+            reject({
+              status: 403,
+              message: "You are not allowed to perform this operation"
+            });
+          } else {
+            const SQL = ` UPDATE ${statements.DASHBOARD_CHART_TABLE_NAME} 
+                          SET headings = ?, modifiedOn = now(), modifiedBy = ?
+                          WHERE chartId = ? 
+                      `;
+
+            const args = [headings, userId, chartId];
+
+            db.query(SQL, args)
+              .then(() => {
+                __getDashboardChart(chartId)
+                  .then((res) => resolve(res))
+                  .catch((err) => reject(err));
+              })
+              .catch((err) => {
+                console.error("Unable to update headings", err);
+                reject({
+                  status: 500,
+                  message: err.sqlMessage || "Unable to update headings"
+                });
+              });
+          }
+        }
+      })
+      .catch((error) => {
+        console.error(
+          "Unable to Update dashboard chart Headings, Exception occurred :: ",
           error
         );
 
@@ -494,6 +557,7 @@ module.exports = Object.freeze({
   createDashboardChart,
   updateDashboardChart,
   updateDashboardSpecLimits,
+  updateDashboardHeadings,
   deleteDashboardChart,
   __canCreate,
   __canUpdate,

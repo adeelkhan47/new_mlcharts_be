@@ -33,6 +33,7 @@ const CREATE_DASHBOARD_CHART_TABLE = `
                                     chartType VARCHAR(255),
                                     upperSpecLimit VARCHAR(255),
                                     lowerSpecLimit VARCHAR(255),
+                                    headings TEXT,
                                     createdOn DATETIME DEFAULT CURRENT_TIMESTAMP,
                                     createdBy VARCHAR(255),
                                     modifiedOn DATETIME NULL,
