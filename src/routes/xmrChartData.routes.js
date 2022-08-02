@@ -6,10 +6,11 @@ const router = express.Router();
 router.get("/:chartId", (req, res) => {
   const chartId = req.params.chartId;
   const password = req.query.password || "";
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
   if (
-    validationUtil.isValidString(userId) &&
+    userId &&
     validationUtil.isValidString(chartId)
   ) {
     xmrChartDataService
@@ -30,9 +31,10 @@ router.get("/:chartId", (req, res) => {
 router.post("/", (req, res) => {
   const body = req.body;
   const password = req.query.password || "";
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
-  if (validationUtil.isValidString(userId) && body) {
+  if (userId && body) {
     if (
       body instanceof Array &&
       validationUtil.isValidString(body[0].chartId) &&
@@ -116,10 +118,11 @@ router.post("/", (req, res) => {
 router.put("/", (req, res) => {
   const body = req.body;
   const password = req.query.password || "";
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
   if (
-    validationUtil.isValidString(userId) &&
+    userId &&
     validationUtil.isNonEmptyObj(body) &&
     validationUtil.isValidString(body.chartId) &&
     body.dataId &&
@@ -152,10 +155,11 @@ router.put("/", (req, res) => {
 router.put("/many", (req, res) => {
   const body = req.body;
   const password = req.query.password || "";
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
   if (
-    validationUtil.isValidString(userId) &&
+    userId &&
     validationUtil.isNonEmptyObj(body) &&
     validationUtil.isValidString(body.chartId) &&
     body.dataObjectList
@@ -202,7 +206,8 @@ router.put("/many", (req, res) => {
 router.delete("/", (req, res) => {
   const body = req.body;
   const password = req.query.password || "";
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
   if (
     validationUtil.isNonEmptyObj(body) &&
@@ -227,7 +232,8 @@ router.delete("/", (req, res) => {
 router.delete("/many", (req, res) => {
   const body = req.body;
   const password = req.query.password || "";
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
   if (
     validationUtil.isNonEmptyObj(body) &&

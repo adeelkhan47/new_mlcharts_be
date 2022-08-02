@@ -12,13 +12,16 @@ const CONNECT_DB = `            USE ${DB_NAME}`;
 const CREATE_USER_TABLE = `     
                                 CREATE TABLE IF NOT EXISTS ${USER_TABLE_NAME} 
                                 (
-                                    email VARCHAR(255) PRIMARY KEY, 
+                                    id INT AUTO_INCREMENT PRIMARY KEY,
+                                    email VARCHAR(255) UNIQUE, 
                                     password VARCHAR(255),
                                     firstName VARCHAR(255),
                                     lastName VARCHAR(255),
                                     company VARCHAR(255) NULL,
                                     createdOn DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                    modifiedOn DATETIME NULL
+                                    createdBy INT NULL,
+                                    modifiedOn DATETIME NULL,
+                                    modifiedBy INT NULL
                                 )
                         `;
 
@@ -35,9 +38,9 @@ const CREATE_DASHBOARD_CHART_TABLE = `
                                     lowerSpecLimit VARCHAR(255),
                                     headings TEXT,
                                     createdOn DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                    createdBy VARCHAR(255),
+                                    createdBy INT,
                                     modifiedOn DATETIME NULL,
-                                    modifiedBy VARCHAR(255) NULL
+                                    modifiedBy INT NULL
                                 )
                         `;
 
@@ -51,9 +54,9 @@ const CREATE_XMR_CHART_DATA_TABLE = `
                                     reference VARCHAR(255),
                                     note VARCHAR(255),
                                     createdOn DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                    createdBy VARCHAR(255),
+                                    createdBy INT,
                                     modifiedOn DATETIME NULL, 
-                                    modifiedBy VARCHAR(255) NULL
+                                    modifiedBy INT NULL
                                 )
                         `;
 
@@ -66,9 +69,9 @@ const CREATE_X_BAR_R_CHART_TABLE = `
                                     reference2 VARCHAR(255),
                                     note VARCHAR(255),
                                     createdOn DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                    createdBy VARCHAR(255),
+                                    createdBy INT,
                                     modifiedOn DATETIME NULL,
-                                    modifiedBy VARCHAR(255) NULL
+                                    modifiedBy INT NULL
                                 )
                         `;
 
@@ -80,9 +83,9 @@ const CREATE_X_BAR_R_CHART_DATA_COLUMNS = `
                             columnName VARCHAR(255),
                             value DOUBLE,
                             createdOn DATETIME DEFAULT CURRENT_TIMESTAMP,
-                            createdBy VARCHAR(255),
+                            createdBy INT,
                             modifiedOn DATETIME NULL,
-                            modifiedBy VARCHAR(255) NULL,
+                            modifiedBy INT NULL,
                             PRIMARY KEY (rowId, chartId, columnName)
                         )
                 `;

@@ -31,8 +31,10 @@ function authChecker(req, res, next) {
   if (req.path === "/users/login" || req.path === "/users/register") {
     next();
   } else {
-    const userId = req.headers["user-id"];
-    if (validationUtil.isValidString(userId)) {
+    let userId = req.headers["user-id"];
+    if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
+
+    if (userId) {
       userService
         .__userExists(userId)
         .then((result) => {

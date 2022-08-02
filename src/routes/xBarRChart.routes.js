@@ -7,11 +7,12 @@ router.get("/column/:chartId", async (req, res) => {
   try {
     const chartId = req.params.chartId;
     const password = req.query.password || "";
-    const userId = req.headers["user-id"];
+    let userId = req.headers["user-id"];
+    if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
     if (
       !(
-        validationUtil.isValidString(userId) &&
+        userId &&
         validationUtil.isValidString(chartId)
       )
     ) {
@@ -43,11 +44,12 @@ router.get("/:chartId", async (req, res) => {
   try {
     const chartId = req.params.chartId;
     const password = req.query.password || "";
-    const userId = req.headers["user-id"];
+    let userId = req.headers["user-id"];
+    if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
     if (
       !(
-        validationUtil.isValidString(userId) &&
+        userId &&
         validationUtil.isValidString(chartId)
       )
     ) {
@@ -80,11 +82,12 @@ router.post("/:chartId", async (req, res) => {
     const body = req.body;
     const chartId = req.params.chartId;
     const password = req.query.password || "";
-    const userId = req.headers["user-id"];
+    let userId = req.headers["user-id"];
+    if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
     if (
       !(
-        validationUtil.isValidString(userId) &&
+        userId &&
         validationUtil.isValidString(chartId) &&
         validationUtil.isNonEmptyObj(body)
       )
@@ -123,11 +126,12 @@ router.put("/:chartId/:rowId", async (req, res) => {
     const chartId = req.params.chartId;
     const rowId = req.params.rowId;
     const password = req.query.password || "";
-    const userId = req.headers["user-id"];
+    let userId = req.headers["user-id"];
+    if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
     if (
       !(
-        validationUtil.isValidString(userId) &&
+        userId &&
         validationUtil.isNonEmptyObj(body) &&
         validationUtil.isValidString(chartId) &&
         rowId
@@ -168,11 +172,12 @@ router.delete("/:chartId/:rowId", async (req, res) => {
     const chartId = req.params.chartId;
     const rowId = req.params.rowId;
     const password = req.query.password || "";
-    const userId = req.headers["user-id"];
+    let userId = req.headers["user-id"];
+    if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
     if (
       !(
-        validationUtil.isValidString(userId) &&
+        userId &&
         validationUtil.isValidString(chartId) &&
         rowId
       )
@@ -209,11 +214,12 @@ router.post("/data/multi/:chartId", async (req, res) => {
     const body = req.body;
     const chartId = req.params.chartId;
     const password = req.query.password || "";
-    const userId = req.headers["user-id"];
+    let userId = req.headers["user-id"];
+    if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
     if (
       !(
-        validationUtil.isValidString(userId) &&
+        userId &&
         validationUtil.isValidString(chartId) &&
         validationUtil.isNonEmptyArray(body)
       )
@@ -248,11 +254,12 @@ router.put("/data/multi/:chartId", async (req, res) => {
     const body = req.body;
     const chartId = req.params.chartId;
     const password = req.query.password || "";
-    const userId = req.headers["user-id"];
+    let userId = req.headers["user-id"];
+    if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
     if (
       !(
-        validationUtil.isValidString(userId) &&
+        userId &&
         validationUtil.isValidString(chartId) &&
         validationUtil.isNonEmptyArray(body) &&
         body[0].id
@@ -289,11 +296,12 @@ router.delete("/data/multi/:chartId", async (req, res) => {
     const body = req.body;
     const chartId = req.params.chartId;
     const password = req.query.password || "";
-    const userId = req.headers["user-id"];
+    let userId = req.headers["user-id"];
+    if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
     if (
       !(
-        validationUtil.isValidString(userId) &&
+        userId &&
         validationUtil.isValidString(chartId) &&
         validationUtil.isNonEmptyArray(body)
       )

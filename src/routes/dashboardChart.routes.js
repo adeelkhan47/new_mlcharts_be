@@ -4,9 +4,10 @@ const validationUtil = require("../utils/validation.util");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
-  if (validationUtil.isValidString(userId)) {
+  if (userId) {
     dashboardChartService
       .getDashboardCharts(userId)
       .then((response) => {
@@ -24,11 +25,12 @@ router.get("/", (req, res) => {
 
 router.get("/is-private/:chartId", (req, res) => {
   const chartId = req.params.chartId;
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
   if (
     validationUtil.isValidString(chartId) &&
-    validationUtil.isValidString(userId)
+    userId
   ) {
     dashboardChartService
       .isPrivateChart(chartId, userId)
@@ -48,10 +50,11 @@ router.get("/is-private/:chartId", (req, res) => {
 router.get("/:chartId", (req, res) => {
   const chartId = req.params.chartId;
   const password = req.query.password || "";
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
   if (
-    validationUtil.isValidString(userId) &&
+    userId &&
     validationUtil.isValidString(chartId)
   ) {
     dashboardChartService
@@ -71,10 +74,11 @@ router.get("/:chartId", (req, res) => {
 
 router.post("/", (req, res) => {
   const body = req.body;
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
   if (
-    validationUtil.isValidString(userId) &&
+    userId &&
     validationUtil.isNonEmptyObj(body) &&
     validationUtil.isValidDashboardChartObj(body) &&
     body.hasOwnProperty("upperSpecLimit") &&
@@ -113,10 +117,11 @@ router.put("/:chartId", (req, res) => {
     chartType: "not-needed"
   };
   const chartId = req.params.chartId;
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
   if (
-    validationUtil.isValidString(userId) &&
+    userId &&
     validationUtil.isValidString(chartId) &&
     validationUtil.isNonEmptyObj(body) &&
     validationUtil.isValidDashboardChartObj(body)
@@ -146,10 +151,11 @@ router.put("/:chartId", (req, res) => {
 router.put("/spec-limits/:chartId", (req, res) => {
   const body = req.body;
   const chartId = req.params.chartId;
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
   if (
-    validationUtil.isValidString(userId) &&
+    userId &&
     validationUtil.isValidString(chartId) &&
     validationUtil.isNonEmptyObj(body) &&
     body.hasOwnProperty("upperSpecLimit") &&
@@ -178,9 +184,11 @@ router.put("/spec-limits/:chartId", (req, res) => {
 router.put("/headings/:chartId", (req, res) => {
   const headings = req.body.headings;
   const chartId = req.params.chartId;
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
+
   if (
-    validationUtil.isValidString(userId) &&
+    userId &&
     validationUtil.isValidString(chartId)
   ) {
     dashboardChartService
@@ -204,10 +212,11 @@ router.put("/headings/:chartId", (req, res) => {
 
 router.delete("/:chartId", (req, res) => {
   const chartId = req.params.chartId;
-  const userId = req.headers["user-id"];
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
 
   if (
-    validationUtil.isValidString(userId) &&
+    userId &&
     validationUtil.isValidString(chartId)
   ) {
     dashboardChartService
