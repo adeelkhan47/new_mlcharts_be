@@ -2,6 +2,28 @@ const userService = require("../services/user.service");
 const express = require("express");
 const router = express.Router();
 
+router.get("", (req, res) => {
+  let userId = req.headers["user-id"];
+  if (userId && typeof userId !== 'number' && !isNaN(userId)) userId = Number.parseInt(userId);
+
+  if (
+    userId
+  ) {
+    userService
+      .getAllUsers(userId)
+      .then((response) => {
+        res.send(response);
+      })
+      .catch((err) => {
+        res.status(err.status);
+        res.send(err.message);
+      });
+  } else {
+    res.status(400);
+    res.send("Invalid Request data");
+  }
+});
+
 router.post("/login", (req, res) => {
   const body = req.body;
 

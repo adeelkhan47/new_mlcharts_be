@@ -18,6 +18,7 @@ const CREATE_USER_TABLE = `
                                     firstName VARCHAR(255),
                                     lastName VARCHAR(255),
                                     company VARCHAR(255) NULL,
+                                    role VARCHAR(255) NULL,
                                     createdOn DATETIME DEFAULT CURRENT_TIMESTAMP,
                                     createdBy INT NULL,
                                     modifiedOn DATETIME NULL,

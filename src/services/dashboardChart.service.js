@@ -429,11 +429,37 @@ function deleteDashboardChart(chartId, userId) {
 
             db.query(SQL, args)
               .then(() => {
-                removeAllChartData(chartId, userId);
+                if (result.chartType === "x-mr") {
+                  removeIndividualsChartData(chartId, userId)
+                    .then(() => {
+                      resolve({
+                        message: "Successfully deleted dashboard chart"
+                      });
+                    })
+                    .catch((err) => {
+                      console.error("Unable to delete dashboard chart data", err);
+                      reject({
+                        status: 500,
+                        message: "Unable to delete dashboard chart data"
+                      });
+                    });
+                }
+                else {
+                  removeSubGroupedChartData(chartId, userId)
+                    .then(() => {
+                      resolve({
+                        message: "Successfully deleted dashboard chart"
+                      });
+                    })
+                    .catch((err) => {
+                      console.error("Unable to delete dashboard chart data", err);
+                      reject({
+                        status: 500,
+                        message: "Unable to delete dashboard chart data"
+                      });
+                    });
+                }
 
-                resolve({
-                  message: "Successfully deleted dashboard chart"
-                });
               })
               .catch((err) => {
                 console.error("Unable to delete dashboard chart", err);
@@ -499,10 +525,15 @@ function __canDelete(chartId, password, userId) {
   });
 }
 
-function removeAllChartData(chartId, userId) {
+function removeIndividualsChartData(chartId, userId) {
   return new Promise((resolve, reject) => {
     const SQL = `   DELETE FROM ${statements.XMR_CHART_DATA_TABLE_NAME} 
-                      WHERE chartId = ? AND createdBy = ?
+                    WHERE id IN ( 
+                      SELECT * FROM (
+                        SELECT DISTINCT id FROM ${statements.XMR_CHART_DATA_TABLE_NAME} 
+                        WHERE chartId = ? AND createdBy = ?
+                      ) AS X
+                    )
                   `;
 
     const args = [chartId, userId];
@@ -518,6 +549,43 @@ function removeAllChartData(chartId, userId) {
         reject({
           status: 500,
           message: err.sqlMessage || "Unable to delete chart data"
+        });
+      });
+  });
+}
+
+function removeSubGroupedChartData(chartId, userId) {
+  return new Promise((resolve, reject) => {
+    const SQL = `   DELETE FROM ${statements.X_BAR_R_CHART_TABLE_NAME} 
+                    WHERE id IN ( 
+                      SELECT * FROM (
+                        SELECT DISTINCT id FROM ${statements.X_BAR_R_CHART_TABLE_NAME} 
+                        WHERE chartId = ? AND createdBy = ?
+                      ) AS X
+                    )
+                `;
+    const args = [chartId, userId];
+
+    const SQL2 = `   DELETE FROM ${statements.X_BAR_R_CHART_DATA_COLUMNS_NAME} 
+                WHERE rowId IN ( 
+                  SELECT * FROM (
+                    SELECT DISTINCT rowId FROM ${statements.X_BAR_R_CHART_DATA_COLUMNS_NAME} 
+                    WHERE chartId = ? AND createdBy = ?
+                  ) AS X
+                )
+            `;
+    const args2 = [chartId, userId];
+
+    Promise.all([db.query(SQL, args), db.query(SQL2, args2)])
+      .then(() => {
+        resolve({
+          message: "Successfully removed chart data"
+        });
+      })
+      .catch(() => {
+        reject({
+          status: 500,
+          message: "Unable to delete chart data"
         });
       });
   });

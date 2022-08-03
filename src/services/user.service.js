@@ -161,6 +161,54 @@ function deleteUser(userId, password) {
   });
 }
 
+function getAllUsers(userId) {
+  return new Promise((resolve, reject) => {
+    __getUser(userId)
+      .then(userObj => {
+
+        if (userObj && userObj.role === "admin") {
+
+          const SQL = `   SELECT id, email, firstName, lastName, company, role, createdOn, createdBy, modifiedOn, modifiedBy 
+                          FROM ${statements.USER_TABLE_NAME} 
+                          WHERE id != ? 
+                      `;
+          const args = [userId];
+
+          db.query(SQL, args)
+            .then((result) => {
+              if (result && result[0]) {
+                resolve(result[0]);
+              }
+              else {
+                resolve([]);
+              }
+            })
+            .catch((error) => {
+              console.error(error);
+              reject({
+                status: 500,
+                message: "Something wend wrong"
+              });
+            });
+        }
+        else {
+          reject({
+            status: 400,
+            message: "Invalid request"
+          });
+        }
+
+      })
+      .catch(error => {
+        console.error(error);
+        reject({
+          status: 400,
+          message: "Invalid request"
+        });
+      });
+  });
+}
+
 function __getUser(userId) {
   const SQL = `   SELECT * FROM ${statements.USER_TABLE_NAME} 
                   WHERE id = ?
@@ -211,6 +259,7 @@ module.exports = Object.freeze({
   register,
   updateUser,
   deleteUser,
+  getAllUsers,
   __getUser,
   __userExists
 });
