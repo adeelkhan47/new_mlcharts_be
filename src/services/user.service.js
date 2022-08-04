@@ -72,6 +72,54 @@ function register(email, password, firstName, lastName, company, userId) {
   });
 }
 
+function changePassword(userId, oldPassword, newPassword) {
+  return new Promise((resolve, reject) => {
+    __getUser(userId)
+      .then(userObj => {
+
+        bcrypt.compare(oldPassword, userObj.password).then((matched) => {
+          if (matched) {
+            bcrypt.hash(newPassword, 12).then(passwordHash => {
+              const SQL = ` UPDATE ${statements.USER_TABLE_NAME} 
+                            SET password = ?, modifiedOn = now(), modifiedBy = ?
+                            WHERE id = ? 
+                      `;
+              const args = [passwordHash, userId, userId];
+
+              db.query(SQL, args)
+                .then(() => {
+                  resolve({
+                    message: "Successfully changed password"
+                  });
+                })
+                .catch((err) => {
+                  console.error("Unable to change password ", err);
+                  reject({
+                    status: 500,
+                    message: err.sqlMessage || "Unable to change password"
+                  });
+                });
+            });
+          }
+          else {
+            reject({
+              status: 400,
+              message: "Invalid password"
+            });
+          }
+        });
+
+      })
+      .catch(error => {
+        console.error(error);
+        reject({
+          status: 404,
+          message: "Unable to find user"
+        });
+      });
+  });
+}
+
 function updateUser(userId, updatedUserObj) {
   const SQL = `   UPDATE ${statements.USER_TABLE_NAME} 
                           SET 
@@ -257,6 +305,7 @@ function __userExists(userId) {
 module.exports = Object.freeze({
   login,
   register,
+  changePassword,
   updateUser,
   deleteUser,
   getAllUsers,
