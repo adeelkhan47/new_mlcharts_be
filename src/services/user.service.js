@@ -47,27 +47,33 @@ function login(email, password) {
 
 function register(email, password, firstName, lastName, company, userId) {
   const SQL = `   INSERT INTO ${statements.USER_TABLE_NAME} 
-                        (email, password, firstName, lastName, company, createdBy) 
+                        (email, password, firstName, lastName, company, role, createdBy) 
                     VALUES 
-                        (?, ?, ?, ?, ?, ?)
+                        (?, ?, ?, ?, ?, ?, ?)
                 `;
 
   return new Promise((resolve, reject) => {
-    bcrypt.hash(password, 12).then(passwordHash => {
-      const args = [email, passwordHash, firstName, lastName, company, userId];
-      db.query(SQL, args)
-        .then((res) => {
-          resolve({
-            message: "Successfully created User"
+
+    let role = "user";
+
+    __getUsersCount().then(usersCount => {
+      if (usersCount === 0) role = "admin";
+      bcrypt.hash(password, 12).then(passwordHash => {
+        const args = [email, passwordHash, firstName, lastName, company, role, userId];
+        db.query(SQL, args)
+          .then((res) => {
+            resolve({
+              message: "Successfully created User"
+            });
+          })
+          .catch((err) => {
+            console.error("Unable to create user ", err);
+            reject({
+              status: 500,
+              message: err.sqlMessage || "Unable to create user"
+            });
           });
-        })
-        .catch((err) => {
-          console.error("Unable to create user ", err);
-          reject({
-            status: 500,
-            message: err.sqlMessage || "Unable to create user"
-          });
-        });
+      });
     });
   });
 }
@@ -298,6 +304,25 @@ function __userExists(userId) {
       .catch((error) => {
         console.error(error);
         resolve(false);
+      });
+  });
+}
+
+function __getUsersCount() {
+  const SQL = `SELECT count(*) AS count FROM ${statements.USER_TABLE_NAME}`;
+
+  return new Promise((resolve, reject) => {
+    db.query(SQL, [])
+      .then((result) => {
+        if (result && result[0] && result[0].length) {
+          result = result[0][0].count;
+          resolve(result);
+        }
+        else resolve("UNKNOWN");
+      })
+      .catch((error) => {
+        console.error(error);
+        resolve("UNKNOWN");
       });
   });
 }
